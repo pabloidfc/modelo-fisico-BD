@@ -1,6 +1,6 @@
-drop database if exists project2;
-create database project2;
-use project2;
+drop database if exists project;
+create database project;
+use project;
 
 create table users (
     id int auto_increment primary key,
@@ -10,7 +10,12 @@ create table users (
     apellido varchar(15) not null,
     apellido2 varchar(15) not null,
     email varchar(40) unique not null,
-    password varchar(255) not null
+    email_verified_at timestamp,
+    password varchar(255) not null,
+    remember_token varchar(100),
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp
 );
 
 create table cliente (
@@ -18,13 +23,19 @@ create table cliente (
     rut char(12) not null,
     direccion varchar(100) not null,
     email varchar(40) not null,
-    cuentabancaria varchar(40) not null
+    cuentabancaria varchar(40) not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp
 );
 
 create table almacen (
     id int auto_increment primary key,
     nombre varchar(30) not null,
-    tipo enum("Propio", "De terceros") not null
+    tipo enum("Propio", "De terceros") not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp
 );
 
 create table lote (
@@ -37,6 +48,9 @@ create table lote (
         "Desarmado"
     ) default "Creado" not null,
     peso float not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (creador_id) references users(id),
     foreign key (almacen_destino) references almacen(id)
 );
@@ -57,6 +71,9 @@ create table producto (
     departamento varchar(15) not null,
     direccion_entrega varchar(100) not null,
     fecha_entrega date not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (lote_id) references lote(id),
     foreign key (almacen_id) references almacen(id)
 );
@@ -64,7 +81,10 @@ create table producto (
 create table ruta (
     id int auto_increment primary key,
     distanciakm float not null,
-    tiempo_estimado time not null
+    tiempo_estimado time not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp
 );
 
 create table viaje (
@@ -72,6 +92,9 @@ create table viaje (
     ruta_id int not null,
     salida datetime,
     ultimo_destino datetime,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (ruta_id) references ruta(id)
 );
 
@@ -84,7 +107,10 @@ create table vehiculo (
         "En reparación"
     ) default "Disponible" not null,
     peso float not null,
-    limite_peso float
+    limite_peso float,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp
 );
 
 create table vehiculo_transporta (
@@ -98,6 +124,9 @@ create table vehiculo_transporta (
         "Finalizado"
     ) default "No iniciado" not null,
     salida_programada datetime not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (vehiculo_id) references vehiculo(id),
     foreign key (lote_id) references lote(id)
 );
@@ -109,6 +138,9 @@ create table viaje_asignado (
     viaje_id int not null,
     llegada_almacen datetime,
     salida_almacen datetime,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (vehiculo_id) references vehiculo(id),
     foreign key (lote_id) references lote(id),
     foreign key (viaje_id) references viaje(id)
@@ -118,6 +150,9 @@ create table transportista (
     id int auto_increment primary key,
     user_id int not null,
     vehiculo_id int,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (vehiculo_id) references vehiculo(id)
 );
@@ -128,6 +163,9 @@ create table funcionario (
     almacen_id int not null,
     empresa_id int,
     tipo enum("Propio", "De terceros") not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
@@ -136,6 +174,9 @@ create table funcionario (
 create table administrador (
     id int auto_increment primary key,
     user_id int not null,
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id)
 );
 
@@ -144,6 +185,9 @@ create table telefono (
     user_id int,
     empresa_id int,
     telefono char(9),
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (empresa_id) references cliente(id)
 );
@@ -158,6 +202,9 @@ create table ubicacion (
     nro_de_puerta int not null,
     departamento varchar(15),
     coordenada varchar(255),
+    created_at timestamp not null,
+    updated_at timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
