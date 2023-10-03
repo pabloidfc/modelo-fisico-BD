@@ -209,3 +209,55 @@ create table ubicacion (
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
 );
+
+insert into users (ci, nombre, apellido, apellido2, email, password, created_at,updated_at)
+    values
+        ("54345670", "Guillermo", "Texeira", "Gon calvez", "admin@admin.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now()),
+        ("53213450", "Eustaquio", "Abichuelas", "Fernandez", "@eu.abichuelas@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now()),
+        ("52345670", "Fernando", "Fernandez", "Fernandez", "ferferfer@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now()),
+        ("51245670", "Rodrigo", "Rodriguez", "Rodriguez", "rodrodrod@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now());
+
+insert into almacen (nombre, tipo, created_at, updated_at)
+    values
+        ("Almacen Montevideo", "Propio", now(), now()),
+        ("Almacen Salto", "Propio", now(), now()),
+        ("Almacen Durázno", "Propio", now(), now()),
+        ("Almacen Tacuárembo", "Propio", now(), now());
+
+insert into ubicacion (user_id, calle, nro_de_puerta, departamento, created_at, updated_at)
+    values
+        (1, "Larravide", 11, "Montevideo", now(), now()),
+        (2, "Larravide", 22, "Montevideo", now(), now()),
+        (3, "Larravide", 13, "Montevideo", now(), now()),
+        (4, "Larravide", 101, "Montevideo", now(), now());
+
+insert into ubicacion (almacen_id, calle, nro_de_puerta, departamento, created_at, updated_at)
+    values
+        (1, "Ruta 101", 3, "Montevideo", now(), now()),
+        (2, "Florinda", 3, "Salto", now(), now()),
+        (3, "Ordoñez", 55, "Durázno", now(), now()),
+        (4, "Horacio", 78, "Tacuárembo", now(), now());
+
+
+
+insert into telefono (user_id, telefono, created_at, updated_at)
+    values  
+        (1, "096420645", now(), now()),
+        (2, "096420644", now(), now()),
+        (3, "096420633", now(), now()),
+        (4, "096420622", now(), now());
+
+insert into producto (almacen_id, peso, departamento, direccion_entrega, fecha_entrega, created_at, updated_at)
+    values
+        (1, 44.2, "Salto", "Horacio 22", "2023-10-5", now(), now()),
+        (1, 2.1, "Salto", "Horacio 22", "2023-10-5", now(), now()),
+        (1, 13.22, "Salto", "Horacio 22", "2023-10-5", now(), now());
+
+insert into vehiculo (matricula, peso, limite_peso, created_at, updated_at)
+    values
+        ("34567GHDS2", 1000, 500, now(), now()),
+        ("345F7GHDS2", 1000, 500, now(), now());
+
+insert into ruta (distanciakm, tiempo_estimado, created_at, updated_at)
+    values
+        (1000, "04:43:00", now(), now());
