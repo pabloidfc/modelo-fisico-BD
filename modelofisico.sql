@@ -261,3 +261,15 @@ insert into vehiculo (matricula, peso, limite_peso, created_at, updated_at)
 insert into ruta (distanciakm, tiempo_estimado, created_at, updated_at)
     values
         (1000, "04:43:00", now(), now());
+
+insert into administrador (user_id, created_at, updated_at)
+    values
+        (1, now(), now());
+
+insert into funcionario (user_id, almacen_id, tipo,created_at, updated_at)
+    values
+      (2, 1, "Propio", now(), now());
+
+insert into transportista (user_id,created_at, updated_at)
+    values
+        (3, now(), now());
