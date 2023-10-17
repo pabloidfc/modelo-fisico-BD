@@ -1,6 +1,6 @@
-drop database if exists project2;
-create database project2;
-use project2;
+drop database if exists santiago_etchebarne;
+create database santiago_etchebarne;
+use santiago_etchebarne;
 
 create table users (
     id int auto_increment primary key,
@@ -44,7 +44,7 @@ create table lote (
 create table producto (
     id int auto_increment primary key,
     lote_id int,
-    almacen_id int,
+    almacen_id int not null,
     peso float not null,
     estado enum(
         "En espera",
@@ -54,7 +54,27 @@ create table producto (
         "En viaje",
         "Entregado"
     ) default "En espera" not null,
-    departamento varchar(15) not null,
+    departamento enum(
+        "Artigas",
+        "Canelones",
+        "Cerro Largo",
+        "Colonia",
+        "Durazno",
+        "Flores",
+        "Florida",
+        "Lavalleja",
+        "Maldonado",
+        "Montevideo",
+        "Paysandú",
+        "Río Negro",
+        "Rivera",
+        "Rocha",
+        "Salto",
+        "San José",
+        "Soriano",
+        "Tacuarembó",
+        "Treinta y Tres"
+    ) not null,
     direccion_entrega varchar(100) not null,
     fecha_entrega date not null,
     foreign key (lote_id) references lote(id),
@@ -156,7 +176,27 @@ create table ubicacion (
     calle varchar(30) not null,
     esquina varchar(30),
     nro_de_puerta int not null,
-    departamento varchar(15),
+    departamento enum(
+        "Artigas",
+        "Canelones",
+        "Cerro Largo",
+        "Colonia",
+        "Durazno",
+        "Flores",
+        "Florida",
+        "Lavalleja",
+        "Maldonado",
+        "Montevideo",
+        "Paysandú",
+        "Río Negro",
+        "Rivera",
+        "Rocha",
+        "Salto",
+        "San José",
+        "Soriano",
+        "Tacuarembó",
+        "Treinta y Tres"
+    ) not null,
     coordenada varchar(255),
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
