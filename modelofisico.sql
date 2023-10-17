@@ -83,8 +83,9 @@ create table producto (
 
 create table ruta (
     id int auto_increment primary key,
-    distanciakm float not null,
-    tiempo_estimado time not null
+    distanciakm decimal(6, 2) not null,
+    tiempo_estimado time not null,
+    check (distanciakm > 0)
 );
 
 create table viaje (
