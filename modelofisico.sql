@@ -126,6 +126,18 @@ create table vehiculo_transporta (
     foreign key (lote_id) references lote(id),
     check (orden > 0)
 );
+DELIMITER //
+create trigger check_vehiculo_transporta_salida_programada
+before insert on vehiculo_transporta
+for each row
+begin
+  if NEW.salida_programada <= now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
+//
+DELIMITER ;
 
 create table viaje_asignado (
     id int auto_increment primary key,
