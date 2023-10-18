@@ -50,6 +50,7 @@ create table producto (
         "En espera",
         "Almacenado",
         "Loteado",
+        "En ruta",
         "Desloteado",
         "En viaje",
         "Entregado"
