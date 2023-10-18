@@ -122,7 +122,8 @@ create table vehiculo_transporta (
     ) default "No iniciado" not null,
     salida_programada datetime not null,
     foreign key (vehiculo_id) references vehiculo(id),
-    foreign key (lote_id) references lote(id)
+    foreign key (lote_id) references lote(id),
+    check (orden > 0)
 );
 
 create table viaje_asignado (
