@@ -36,7 +36,7 @@ create table lote (
         "En viaje",
         "Desarmado"
     ) default "Creado" not null,
-    peso decimal(10, 2) not null,
+    peso decimal(10, 2),
     created_at timestamp not null default current_timestamp,
     foreign key (creador_id) references users(id),
     foreign key (almacen_destino) references almacen(id),
@@ -47,7 +47,7 @@ create table producto (
     id int auto_increment primary key,
     lote_id int,
     almacen_id int not null,
-    peso float not null,
+    peso decimal(10, 2) not null,
     estado enum(
         "En espera",
         "Almacenado",
@@ -83,6 +83,18 @@ create table producto (
     foreign key (lote_id) references lote(id),
     foreign key (almacen_id) references almacen(id)
 );
+DELIMITER //
+create trigger check_sum_peso_productos
+before update on lote
+for each row
+begin
+  if NEW.peso != (select ifnull(sum(peso), 0) from producto where lote_id = NEW.id) then
+    signal state "45000"
+    SET message_text = "La suma de los pesos de los productos no coincide con el peso del lote.";
+  end if;
+END;
+//
+DELIMITER ;
 
 create table ruta (
     id int auto_increment primary key,
@@ -140,17 +152,6 @@ begin
 end;
 //
 DELIMITER ;
-
-alter table vehiculo_transporta
-add constraint check_peso_lotes
-check (
-    (select sum(l.peso)
-     from lote l
-     where l.id = vehiculo_transporta.lote_id)
-    <= (select v.limite_peso
-         from vehiculo v
-         where v.id = vehiculo_transporta.vehiculo_id)
-);
 
 create table viaje_asignado (
     id int auto_increment primary key,
