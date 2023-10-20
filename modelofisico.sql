@@ -141,6 +141,17 @@ end;
 //
 DELIMITER ;
 
+alter table vehiculo_transporta
+add constraint check_peso_lotes
+check (
+    (select sum(l.peso)
+     from lote l
+     where l.id = vehiculo_transporta.lote_id)
+    <= (select v.limite_peso
+         from vehiculo v
+         where v.id = vehiculo_transporta.vehiculo_id)
+);
+
 create table viaje_asignado (
     id int auto_increment primary key,
     vehiculo_id int not null,
