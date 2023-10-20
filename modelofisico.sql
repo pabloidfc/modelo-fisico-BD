@@ -36,9 +36,11 @@ create table lote (
         "En viaje",
         "Desarmado"
     ) default "Creado" not null,
-    peso float not null,
+    peso decimal(10, 2) not null,
+    created_at timestamp not null default current_timestamp,
     foreign key (creador_id) references users(id),
-    foreign key (almacen_destino) references almacen(id)
+    foreign key (almacen_destino) references almacen(id),
+    check (peso > 0)
 );
 
 create table producto (
