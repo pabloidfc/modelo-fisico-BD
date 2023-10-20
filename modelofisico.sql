@@ -83,18 +83,6 @@ create table producto (
     foreign key (lote_id) references lote(id),
     foreign key (almacen_id) references almacen(id)
 );
-DELIMITER //
-create trigger check_sum_peso_productos
-before update on lote
-for each row
-begin
-  if NEW.peso != (select ifnull(sum(peso), 0) from producto where lote_id = NEW.id) then
-    signal state "45000"
-    SET message_text = "La suma de los pesos de los productos no coincide con el peso del lote.";
-  end if;
-END;
-//
-DELIMITER ;
 
 create table ruta (
     id int auto_increment primary key,
@@ -140,18 +128,6 @@ create table vehiculo_transporta (
     foreign key (lote_id) references lote(id),
     check (orden > 0)
 );
-DELIMITER //
-create trigger check_vehiculo_transporta_salida_programada
-before insert on vehiculo_transporta
-for each row
-begin
-  if NEW.salida_programada <= now() then
-    signal sqlstate "45000"
-    set message_text = "La fecha tiene que ser mayor a la actual";
-  end if;
-end;
-//
-DELIMITER ;
 
 create table viaje_asignado (
     id int auto_increment primary key,
@@ -233,3 +209,55 @@ create table ubicacion (
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
 );
+
+DELIMITER //
+create trigger check_sum_peso_productos
+before update on lote
+for each row
+begin
+  if NEW.peso != (select ifnull(sum(peso), 0) from producto where lote_id = NEW.id) then
+    signal sqlstate "45000"
+    SET message_text = "La suma de los pesos de los productos no coincide con el peso del lote.";
+  end if;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_vehiculo_transporta_salida_programada
+before insert on vehiculo_transporta
+for each row
+begin
+  if NEW.salida_programada <= now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER check_weight_limit
+BEFORE INSERT ON vehiculo_transporta
+FOR EACH ROW
+BEGIN
+    DECLARE total_weight DECIMAL(10, 2);
+    
+    -- Calculate the total weight including the new record
+    SELECT SUM(l.peso) INTO total_weight
+    FROM lote l
+    WHERE l.id = NEW.lote_id;
+    
+    -- Calculate the total weight of previous records
+    SELECT SUM(l.peso) INTO total_weight
+    FROM vehiculo_transporta vt
+    JOIN lote l ON vt.lote_id = l.id
+    WHERE vt.vehiculo_id = NEW.vehiculo_id AND vt.salida_programada = NEW.salida_programada;
+    
+    IF total_weight > (SELECT limite_peso FROM vehiculo WHERE id = NEW.vehiculo_id) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Weight limit exceeded for the vehicle.';
+    END IF;
+END;
+//
+DELIMITER ;
