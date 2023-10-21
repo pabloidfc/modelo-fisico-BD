@@ -24,7 +24,7 @@ create table cliente (
 create table almacen (
     id int auto_increment primary key,
     nombre varchar(30) not null,
-    tipo enum("Propio", "De terceros") not null
+    tipo enum("Propio", "De terceros") default "Propio" not null
 );
 
 create table lote (
