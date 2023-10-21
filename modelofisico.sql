@@ -36,7 +36,7 @@ create table lote (
         "En viaje",
         "Desarmado"
     ) default "Creado" not null,
-    peso decimal(10, 2),
+    peso decimal(10, 2) not null,
     created_at timestamp not null default current_timestamp,
     foreign key (creador_id) references users(id),
     foreign key (almacen_destino) references almacen(id),
@@ -212,14 +212,24 @@ create table ubicacion (
 
 DELIMITER //
 create trigger check_sum_peso_productos
-before update on lote
+after insert on lote
 for each row
 begin
-  if NEW.peso != (select ifnull(sum(peso), 0) from producto where lote_id = NEW.id) then
-    signal sqlstate "45000"
-    SET message_text = "La suma de los pesos de los productos no coincide con el peso del lote.";
-  end if;
-END;
+    declare lote_peso decimal(10,2);
+    declare suma_peso_productos decimal(10,2);
+
+    select NEW.peso into lote_peso;
+
+    select sum(peso) into suma_peso_productos
+    from producto
+    where lote_id = NEW.id;
+
+    if lote_peso <> suma_peso_productos then
+        signal sqlstate "45000"
+        set message_text = "La suma de los pesos de los productos no coincide con el peso del lote";
+        delete from lote where id = NEW.id;
+    end if;
+end;
 //
 DELIMITER ;
 
@@ -237,8 +247,7 @@ end;
 DELIMITER ;
 
 DELIMITER //
-
-create TRIGGER check_limite_peso_vehiculo
+create trigger check_limite_peso_vehiculo
 before insert on vehiculo_transporta
 for each row
 begin
