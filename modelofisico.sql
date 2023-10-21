@@ -81,7 +81,8 @@ create table producto (
     direccion_entrega varchar(100) not null,
     fecha_entrega date not null,
     foreign key (lote_id) references lote(id),
-    foreign key (almacen_id) references almacen(id)
+    foreign key (almacen_id) references almacen(id),
+    check (peso > 0)
 );
 
 create table ruta (
@@ -281,5 +282,24 @@ begin
     set message_text = "La suma de los pesos de los lotes superan al límite del vehiculo asignado";
     end if;
 END;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_fecha_entrega_producto
+before insert on producto
+for each row
+begin
+    declare fecha_actual datetime;
+    declare plazo_fecha_maximo datetime;
+
+    set fecha_actual = now();
+    set plazo_fecha_maximo = DATE_ADD(fecha_actual, interval 2 day);
+
+    if NEW.fecha_entrega < fecha_actual or NEW.fecha_entrega > plazo_fecha_maximo then
+        signal sqlstate "45000"
+        set message_text = "La fecha de entrega del producto es incorrecta";
+    end if;
+end;
 //
 DELIMITER ;
