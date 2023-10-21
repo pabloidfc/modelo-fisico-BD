@@ -172,9 +172,10 @@ create table telefono (
     id int auto_increment primary key,
     user_id int,
     empresa_id int,
-    telefono char(9),
+    telefono char(9) not null,
     foreign key (user_id) references users(id),
-    foreign key (empresa_id) references cliente(id)
+    foreign key (empresa_id) references cliente(id),
+    check (telefono REGEXP "^[0-9]{1,9}$")
 );
 
 create table ubicacion (
