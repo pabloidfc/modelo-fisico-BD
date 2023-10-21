@@ -10,7 +10,8 @@ create table users (
     apellido varchar(15) not null,
     apellido2 varchar(15) not null,
     email varchar(40) unique not null,
-    password varchar(255) not null
+    password varchar(255) not null,
+    check (ci REGEXP "^[0-9]{8}$")
 );
 
 create table cliente (
