@@ -237,27 +237,40 @@ end;
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER check_weight_limit
-BEFORE INSERT ON vehiculo_transporta
-FOR EACH ROW
-BEGIN
-    DECLARE total_weight DECIMAL(10, 2);
-    
-    -- Calculate the total weight including the new record
-    SELECT SUM(l.peso) INTO total_weight
-    FROM lote l
-    WHERE l.id = NEW.lote_id;
-    
-    -- Calculate the total weight of previous records
-    SELECT SUM(l.peso) INTO total_weight
-    FROM vehiculo_transporta vt
-    JOIN lote l ON vt.lote_id = l.id
-    WHERE vt.vehiculo_id = NEW.vehiculo_id AND vt.salida_programada = NEW.salida_programada;
-    
-    IF total_weight > (SELECT limite_peso FROM vehiculo WHERE id = NEW.vehiculo_id) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Weight limit exceeded for the vehicle.';
-    END IF;
+
+create TRIGGER check_limite_peso_vehiculo
+before insert on vehiculo_transporta
+for each row
+begin
+    declare peso_total decimal(10, 2);
+    declare peso_anteriores_lotes decimal(10, 2);
+    declare peso_nuevo_lote decimal(10, 2);
+    declare limite_peso_vehiculo decimal(10, 2);
+
+    -- Obtengo el peso de los Anteriores Lotes
+    select sum(l.peso) into peso_anteriores_lotes
+    from lote l
+    where id in (
+        select lote_id from vehiculo_transporta vt
+        where vehiculo_id = NEW.vehiculo_id and estado_viaje = NEW.estado_viaje
+    );
+
+    -- Obtengo el peso del Lote actual
+    select peso into peso_nuevo_lote
+    from lote where id = NEW.lote_id;
+
+    -- Sumo los pesos
+    set peso_total = peso_anteriores_lotes + peso_nuevo_lote;
+
+    -- COMMENT
+    select limite_peso into limite_peso_vehiculo
+    from vehiculo
+    where id = NEW.vehiculo_id;
+
+    if peso_total > limite_peso_vehiculo then
+    SIGNAL SQLSTATE "45000"
+    set message_text = "La suma de los pesos de los lotes superan al límite del vehiculo asignado";
+    end if;
 END;
 //
 DELIMITER ;
