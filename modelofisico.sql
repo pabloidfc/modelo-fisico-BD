@@ -237,7 +237,7 @@ end;
 DELIMITER ;
 
 DELIMITER //
-create trigger check_vehiculo_transporta_salida_programada
+create trigger check_salida_programada
 before insert on vehiculo_transporta
 for each row
 begin
@@ -288,7 +288,7 @@ END;
 DELIMITER ;
 
 DELIMITER //
-create trigger check_fecha_entrega_producto
+create trigger check_fecha_entrega
 before insert on producto
 for each row
 begin
