@@ -156,7 +156,7 @@ create table funcionario (
     user_id int not null,
     almacen_id int not null,
     empresa_id int,
-    tipo enum("Propio", "De terceros") not null,
+    tipo enum("Propio", "De terceros") default "Propio" not null,
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
@@ -172,7 +172,7 @@ create table telefono (
     id int auto_increment primary key,
     user_id int,
     empresa_id int,
-    telefono char(9) not null,
+    telefono char(9) unique not null,
     foreign key (user_id) references users(id),
     foreign key (empresa_id) references cliente(id),
     check (telefono REGEXP "^[0-9]{1,9}$")
