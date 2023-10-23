@@ -305,3 +305,16 @@ begin
 end;
 //
 DELIMITER ;
+
+DELIMITER //
+create trigger check_salida
+before insert on viaje
+for each row
+begin
+  if NEW.salida <= now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
+//
+DELIMITER ;
