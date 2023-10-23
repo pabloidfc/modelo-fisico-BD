@@ -16,10 +16,11 @@ create table users (
 
 create table cliente (
     id int auto_increment primary key,
-    rut char(12) not null,
+    rut char(12) unique not null,
     direccion varchar(100) not null,
-    email varchar(40) not null,
-    cuentabancaria varchar(40) not null
+    email varchar(40) unique not null,
+    cuentabancaria varchar(40) not null,
+    check (char_length(rut) = 12)
 );
 
 create table almacen (
