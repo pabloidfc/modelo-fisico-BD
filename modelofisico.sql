@@ -214,6 +214,18 @@ create table ubicacion (
     foreign key (empresa_id) references cliente(id)
 );
 
+create table cadete (
+    id int auto_increment primary key
+);
+
+create table reparte_producto (
+    id int auto_increment primary key,
+    cadete_id int not null,
+    producto_id int not null,
+    fecha_salida datetime default current_timestamp not null,
+    entregado tinyint(1) default 0
+);
+
 DELIMITER //
 create trigger check_sum_peso_productos
 after insert on lote
