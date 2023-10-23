@@ -246,10 +246,7 @@ begin
     set message_text = "La fecha tiene que ser mayor a la actual";
   end if;
 end;
-//
-DELIMITER ;
 
-DELIMITER //
 create trigger check_limite_peso_vehiculo
 before insert on vehiculo_transporta
 for each row
@@ -283,7 +280,7 @@ begin
     SIGNAL SQLSTATE "45000"
     set message_text = "La suma de los pesos de los lotes superan al límite del vehiculo asignado";
     end if;
-END;
+end;
 //
 DELIMITER ;
 
@@ -316,7 +313,6 @@ begin
     set message_text = "La fecha tiene que ser mayor a la actual";
   end if;
 end;
-//
 
 create trigger check_salida_actualizar
 before update on viaje
