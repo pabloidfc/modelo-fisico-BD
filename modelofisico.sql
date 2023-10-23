@@ -365,9 +365,9 @@ create trigger check_llegada_almacen
 before update on viaje_asignado
 for each row
 begin
-  if NEW.llegada_almacen <= now() then
+  if NEW.llegada_almacen <> now() then
     signal sqlstate "45000"
-    set message_text = "La fecha tiene que ser mayor a la actual";
+    set message_text = "La fecha tiene que ser la actual";
   end if;
 end;
 
