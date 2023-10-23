@@ -141,7 +141,7 @@ create table viaje_asignado (
     foreign key (vehiculo_id) references vehiculo(id),
     foreign key (lote_id) references lote(id),
     foreign key (viaje_id) references viaje(id)
-); 
+);
 
 create table transportista (
     id int auto_increment primary key,
@@ -341,6 +341,29 @@ begin
   if NEW.ultimo_destino <= NEW.salida then
     signal sqlstate "45000"
     set message_text = "El último destino tiene que ser mayor a la salida";
+  end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_llegada_almacen
+before update on viaje_asignado
+for each row
+begin
+  if NEW.llegada_almacen <= now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
+
+create trigger check_salida_almacen
+before update on viaje_asignado
+for each row
+begin
+  if NEW.salida_almacen <= NEW.llegada_almacen then
+    signal sqlstate "45000"
+    set message_text = "La salida del tiene que ser mayor a la llegada";
   end if;
 end;
 //
