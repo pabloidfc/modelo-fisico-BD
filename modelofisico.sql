@@ -104,7 +104,7 @@ create table viaje (
 
 create table vehiculo (
     id int auto_increment primary key,
-    matricula varchar(7) unique not null,
+    matricula char(7) unique not null,
     estado enum(
         "Disponible",
         "No disponible",
@@ -113,7 +113,8 @@ create table vehiculo (
     peso decimal(7, 2) not null,
     limite_peso decimal(10, 2) not null,
     check (peso > 0 and peso <= 48000),
-    check (limite_peso > 0)
+    check (limite_peso > 0),
+    check (matricula REGEXP "^[A-Z]{3}[0-9]{4}$")
 );
 
 create table vehiculo_transporta (
