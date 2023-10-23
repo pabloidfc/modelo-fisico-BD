@@ -274,7 +274,7 @@ begin
     -- Sumo los pesos
     set peso_total = peso_anteriores_lotes + peso_nuevo_lote;
 
-    -- COMMENT
+    -- Obtengo el limite de peso del vehículo asignado
     select limite_peso into limite_peso_vehiculo
     from vehiculo
     where id = NEW.vehiculo_id;
@@ -307,13 +307,44 @@ end;
 DELIMITER ;
 
 DELIMITER //
-create trigger check_salida
+create trigger check_salida_insertar
 before insert on viaje
 for each row
 begin
   if NEW.salida <= now() then
     signal sqlstate "45000"
     set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
+//
+
+create trigger check_salida_actualizar
+before update on viaje
+for each row
+begin
+  if NEW.salida <= now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
+
+create trigger check_ultimo_destino_insertar
+before insert on viaje
+for each row
+begin
+  if NEW.ultimo_destino <= NEW.salida then
+    signal sqlstate "45000"
+    set message_text = "El último destino tiene que ser mayor a la salida";
+  end if;
+end;
+
+create trigger check_ultimo_destino_actualizar
+before update on viaje
+for each row
+begin
+  if NEW.ultimo_destino <= NEW.salida then
+    signal sqlstate "45000"
+    set message_text = "El último destino tiene que ser mayor a la salida";
   end if;
 end;
 //
