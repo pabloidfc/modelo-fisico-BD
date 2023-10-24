@@ -10,7 +10,12 @@ create table users (
     apellido varchar(15) not null,
     apellido2 varchar(15) not null,
     email varchar(40) unique not null,
+    email_verified_at timestamp,
     password varchar(255) not null,
+    remember_token varchar(100),
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     check (ci REGEXP "^[0-9]{8}$")
 );
 
@@ -20,13 +25,19 @@ create table cliente (
     direccion varchar(100) not null,
     email varchar(40) unique not null,
     cuentabancaria varchar(40) not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     check (char_length(rut) = 12)
 );
 
 create table almacen (
     id int auto_increment primary key,
     nombre varchar(30) not null,
-    tipo enum("Propio", "De terceros") default "Propio" not null
+    tipo enum("Propio", "De terceros") default "Propio" not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp
 );
 
 create table lote (
@@ -39,7 +50,9 @@ create table lote (
         "Desarmado"
     ) default "Creado" not null,
     peso decimal(10, 2) not null,
-    created_at timestamp not null default current_timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     foreign key (creador_id) references users(id),
     foreign key (almacen_destino) references almacen(id),
     check (peso > 0)
@@ -82,8 +95,8 @@ create table producto (
     ) not null,
     direccion_entrega varchar(100) not null,
     fecha_entrega date not null,
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (lote_id) references lote(id),
     foreign key (almacen_id) references almacen(id),
@@ -94,6 +107,9 @@ create table ruta (
     id int auto_increment primary key,
     distanciakm decimal(6, 2) not null,
     tiempo_estimado time not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     check (distanciakm > 0)
 );
 
@@ -102,8 +118,8 @@ create table viaje (
     ruta_id int not null,
     salida datetime default current_timestamp not null,
     ultimo_destino datetime,
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (ruta_id) references ruta(id)
 );
@@ -118,6 +134,9 @@ create table vehiculo (
     ) default "Disponible" not null,
     peso decimal(7, 2) not null,
     limite_peso decimal(10, 2) not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     check (peso > 0 and peso <= 48000),
     check (limite_peso > 0),
     check (matricula REGEXP "^[A-Z]{3}[0-9]{4}$")
@@ -134,8 +153,8 @@ create table vehiculo_transporta (
         "Finalizado"
     ) default "No iniciado" not null,
     salida_programada datetime not null,
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (vehiculo_id) references vehiculo(id),
     foreign key (lote_id) references lote(id),
@@ -149,8 +168,8 @@ create table viaje_asignado (
     viaje_id int not null,
     llegada_almacen datetime,
     salida_almacen datetime,
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (vehiculo_id) references vehiculo(id),
     foreign key (lote_id) references lote(id),
@@ -161,8 +180,8 @@ create table transportista (
     id int auto_increment primary key,
     user_id int not null,
     vehiculo_id int,
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (vehiculo_id) references vehiculo(id)
@@ -174,6 +193,9 @@ create table funcionario (
     almacen_id int not null,
     empresa_id int,
     tipo enum("Propio", "De terceros") default "Propio" not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
@@ -182,8 +204,8 @@ create table funcionario (
 create table administrador (
     id int auto_increment primary key,
     user_id int not null,
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (user_id) references users(id)
 );
@@ -193,6 +215,9 @@ create table telefono (
     user_id int,
     empresa_id int,
     telefono char(9) unique not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (empresa_id) references cliente(id),
     check (telefono REGEXP "^[0-9]{1,9}$")
@@ -228,8 +253,8 @@ create table ubicacion (
         "Treinta y Tres"
     ) not null,
     coordenada varchar(255),
-    created_at timestamp not null,
-    updated_at timestamp,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
@@ -237,7 +262,10 @@ create table ubicacion (
 );
 
 create table cadete (
-    id int auto_increment primary key
+    id int auto_increment primary key,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp
 );
 
 create table reparte_producto (
@@ -246,6 +274,9 @@ create table reparte_producto (
     producto_id int not null,
     fecha_salida datetime default current_timestamp not null,
     entregado tinyint(1) default 0,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    deleted_at timestamp,
     foreign key (cadete_id) references cadete(id)
 );
 
