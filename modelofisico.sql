@@ -97,7 +97,7 @@ create table ruta (
 create table viaje (
     id int auto_increment primary key,
     ruta_id int not null,
-    salida datetime,
+    salida datetime default current_timestamp not null,
     ultimo_destino datetime,
     foreign key (ruta_id) references ruta(id)
 );
@@ -322,29 +322,9 @@ create trigger check_salida_insertar
 before insert on viaje
 for each row
 begin
-  if NEW.salida <= now() then
+  if NEW.salida <> now() then
     signal sqlstate "45000"
-    set message_text = "La fecha tiene que ser mayor a la actual";
-  end if;
-end;
-
-create trigger check_salida_actualizar
-before update on viaje
-for each row
-begin
-  if NEW.salida <= now() then
-    signal sqlstate "45000"
-    set message_text = "La fecha tiene que ser mayor a la actual";
-  end if;
-end;
-
-create trigger check_ultimo_destino_insertar
-before insert on viaje
-for each row
-begin
-  if NEW.ultimo_destino <= NEW.salida then
-    signal sqlstate "45000"
-    set message_text = "El último destino tiene que ser mayor a la salida";
+    set message_text = "La fecha tiene que ser la actual";
   end if;
 end;
 
@@ -380,6 +360,21 @@ begin
     set message_text = "La salida del tiene que ser mayor a la llegada";
   end if;
 end;
+
+create trigger check_llegada_almacen_mayor_salida
+before update on viaje_asignado
+for each row
+begin
+    declare salida_inicial datetime;
+
+    select salida into salida_inicial
+    from viaje where id = NEW.viaje_id;
+
+    if NEW.llegada_almacen <= salida_inicial then
+        signal sqlstate "45000"
+        set message_text = "La llegada al almacén tiene que ser mayor a la salida inical del viaje";
+    end if;
+end;
 //
 DELIMITER ;
 
@@ -411,7 +406,7 @@ begin
     then
         signal sqlstate "45000"
         set message_text = "Al menos uno de user_id o empresa_id debe tener un valor";
-        end if;
+    end if;
 end;
 //
 DELIMITER ;
