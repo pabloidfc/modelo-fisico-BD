@@ -382,3 +382,36 @@ begin
 end;
 //
 DELIMITER ;
+
+DELIMITER //
+create trigger check_existencia_ubicacion
+before insert on ubicacion
+for each row
+begin
+    if 
+        NEW.user_id is null and
+        NEW.almacen_id is null and
+        NEW.empresa_id is null
+    then
+        signal sqlstate "45000"
+        set message_text = "Al menos uno de user_id, almacen_id o empresa_id debe tener un valor";
+        end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_existencia_telefono
+before insert on telefono
+for each row
+begin
+    if 
+        NEW.user_id is null and
+        NEW.empresa_id is null
+    then
+        signal sqlstate "45000"
+        set message_text = "Al menos uno de user_id o empresa_id debe tener un valor";
+        end if;
+end;
+//
+DELIMITER ;
