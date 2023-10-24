@@ -25,6 +25,9 @@ DROP TABLE IF EXISTS `administrador`;
 CREATE TABLE `administrador` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `administrador_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
@@ -51,6 +54,9 @@ CREATE TABLE `almacen` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(30) NOT NULL,
   `tipo` enum('Propio','De terceros') NOT NULL DEFAULT 'Propio',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -73,6 +79,9 @@ DROP TABLE IF EXISTS `cadete`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cadete` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -99,6 +108,9 @@ CREATE TABLE `cliente` (
   `direccion` varchar(100) NOT NULL,
   `email` varchar(40) NOT NULL,
   `cuentabancaria` varchar(40) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `rut` (`rut`),
   UNIQUE KEY `email` (`email`),
@@ -128,6 +140,9 @@ CREATE TABLE `funcionario` (
   `almacen_id` int NOT NULL,
   `empresa_id` int DEFAULT NULL,
   `tipo` enum('Propio','De terceros') NOT NULL DEFAULT 'Propio',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `almacen_id` (`almacen_id`),
@@ -197,7 +212,9 @@ CREATE TABLE `lote` (
   `almacen_destino` int NOT NULL,
   `estado` enum('Creado','En viaje','Desarmado') NOT NULL DEFAULT 'Creado',
   `peso` decimal(10,2) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `creador_id` (`creador_id`),
   KEY `almacen_destino` (`almacen_destino`),
@@ -262,6 +279,9 @@ CREATE TABLE `producto` (
   `departamento` enum('Artigas','Canelones','Cerro Largo','Colonia','Durazno','Flores','Florida','Lavalleja','Maldonado','Montevideo','Paysandú','Río Negro','Rivera','Rocha','Salto','San José','Soriano','Tacuarembó','Treinta y Tres') NOT NULL,
   `direccion_entrega` varchar(100) NOT NULL,
   `fecha_entrega` date NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `lote_id` (`lote_id`),
   KEY `almacen_id` (`almacen_id`),
@@ -319,7 +339,12 @@ CREATE TABLE `reparte_producto` (
   `producto_id` int NOT NULL,
   `fecha_salida` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `entregado` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cadete_id` (`cadete_id`),
+  CONSTRAINT `reparte_producto_ibfk_1` FOREIGN KEY (`cadete_id`) REFERENCES `cadete` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -343,6 +368,9 @@ CREATE TABLE `ruta` (
   `id` int NOT NULL AUTO_INCREMENT,
   `distanciakm` decimal(6,2) NOT NULL,
   `tiempo_estimado` time NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `ruta_chk_1` CHECK ((`distanciakm` > 0))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -369,6 +397,9 @@ CREATE TABLE `telefono` (
   `user_id` int DEFAULT NULL,
   `empresa_id` int DEFAULT NULL,
   `telefono` char(9) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `telefono` (`telefono`),
   KEY `user_id` (`user_id`),
@@ -422,6 +453,9 @@ CREATE TABLE `transportista` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `vehiculo_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `vehiculo_id` (`vehiculo_id`),
@@ -456,6 +490,9 @@ CREATE TABLE `ubicacion` (
   `nro_de_puerta` int NOT NULL,
   `departamento` enum('Artigas','Canelones','Cerro Largo','Colonia','Durazno','Flores','Florida','Lavalleja','Maldonado','Montevideo','Paysandú','Río Negro','Rivera','Rocha','Salto','San José','Soriano','Tacuarembó','Treinta y Tres') NOT NULL,
   `coordenada` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `almacen_id` (`almacen_id`),
@@ -514,7 +551,12 @@ CREATE TABLE `users` (
   `apellido` varchar(15) NOT NULL,
   `apellido2` varchar(15) NOT NULL,
   `email` varchar(40) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ci` (`ci`),
   UNIQUE KEY `email` (`email`),
@@ -544,6 +586,9 @@ CREATE TABLE `vehiculo` (
   `estado` enum('Disponible','No disponible','En reparación') NOT NULL DEFAULT 'Disponible',
   `peso` decimal(7,2) NOT NULL,
   `limite_peso` decimal(10,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `matricula` (`matricula`),
   CONSTRAINT `vehiculo_chk_1` CHECK (((`peso` > 0) and (`peso` <= 48000))),
@@ -575,6 +620,9 @@ CREATE TABLE `vehiculo_transporta` (
   `orden` tinyint NOT NULL,
   `estado_viaje` enum('No iniciado','En curso','Finalizado') NOT NULL DEFAULT 'No iniciado',
   `salida_programada` datetime NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `vehiculo_id` (`vehiculo_id`),
   KEY `lote_id` (`lote_id`),
@@ -670,6 +718,9 @@ CREATE TABLE `viaje` (
   `ruta_id` int NOT NULL,
   `salida` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ultimo_destino` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ruta_id` (`ruta_id`),
   CONSTRAINT `viaje_ibfk_1` FOREIGN KEY (`ruta_id`) REFERENCES `ruta` (`id`)
@@ -739,6 +790,9 @@ CREATE TABLE `viaje_asignado` (
   `viaje_id` int NOT NULL,
   `llegada_almacen` datetime DEFAULT NULL,
   `salida_almacen` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `vehiculo_id` (`vehiculo_id`),
   KEY `lote_id` (`lote_id`),
@@ -832,4 +886,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-24 16:15:20
+-- Dump completed on 2023-10-24 16:32:00
