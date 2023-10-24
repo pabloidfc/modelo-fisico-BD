@@ -50,7 +50,7 @@ create table lote (
         "Desarmado"
     ) default "Creado" not null,
     peso decimal(10, 2) not null,
-    created_at timestamp default current_timestamp,
+    created_at timestamp default not null current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
     foreign key (creador_id) references users(id),
