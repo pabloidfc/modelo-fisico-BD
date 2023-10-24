@@ -1,6 +1,6 @@
-drop database if exists project;
-create database project;
-use project;
+drop database if exists santiago_etchebarne;
+create database santiago_etchebarne;
+use santiago_etchebarne;
 
 create table users (
     id int auto_increment primary key,
@@ -10,32 +10,23 @@ create table users (
     apellido varchar(15) not null,
     apellido2 varchar(15) not null,
     email varchar(40) unique not null,
-    email_verified_at timestamp,
     password varchar(255) not null,
-    remember_token varchar(100),
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp
+    check (ci REGEXP "^[0-9]{8}$")
 );
 
 create table cliente (
     id int auto_increment primary key,
-    rut char(12) not null,
+    rut char(12) unique not null,
     direccion varchar(100) not null,
-    email varchar(40) not null,
+    email varchar(40) unique not null,
     cuentabancaria varchar(40) not null,
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp
+    check (char_length(rut) = 12)
 );
 
 create table almacen (
     id int auto_increment primary key,
     nombre varchar(30) not null,
-    tipo enum("Propio", "De terceros") not null,
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp
+    tipo enum("Propio", "De terceros") default "Propio" not null
 );
 
 create table lote (
@@ -47,50 +38,69 @@ create table lote (
         "En viaje",
         "Desarmado"
     ) default "Creado" not null,
-    peso float not null,
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp,
+    peso decimal(10, 2) not null,
+    created_at timestamp not null default current_timestamp,
     foreign key (creador_id) references users(id),
-    foreign key (almacen_destino) references almacen(id)
+    foreign key (almacen_destino) references almacen(id),
+    check (peso > 0)
 );
 
 create table producto (
     id int auto_increment primary key,
     lote_id int,
-    almacen_id int,
-    peso float not null,
+    almacen_id int not null,
+    peso decimal(10, 2) not null,
     estado enum(
         "En espera",
         "Almacenado",
         "Loteado",
+        "En ruta",
         "Desloteado",
         "En viaje",
         "Entregado"
     ) default "En espera" not null,
-    departamento varchar(15) not null,
+    departamento enum(
+        "Artigas",
+        "Canelones",
+        "Cerro Largo",
+        "Colonia",
+        "Durazno",
+        "Flores",
+        "Florida",
+        "Lavalleja",
+        "Maldonado",
+        "Montevideo",
+        "Paysandú",
+        "Río Negro",
+        "Rivera",
+        "Rocha",
+        "Salto",
+        "San José",
+        "Soriano",
+        "Tacuarembó",
+        "Treinta y Tres"
+    ) not null,
     direccion_entrega varchar(100) not null,
     fecha_entrega date not null,
     created_at timestamp not null,
     updated_at timestamp,
     deleted_at timestamp,
     foreign key (lote_id) references lote(id),
-    foreign key (almacen_id) references almacen(id)
+    foreign key (almacen_id) references almacen(id),
+    check (peso > 0)
 );
 
 create table ruta (
     id int auto_increment primary key,
-    distanciakm float not null,
+    distanciakm decimal(6, 2) not null,
     tiempo_estimado time not null,
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp
+    check (distanciakm > 0)
 );
 
 create table viaje (
     id int auto_increment primary key,
     ruta_id int not null,
-    salida datetime,
+    salida datetime default current_timestamp not null,
     ultimo_destino datetime,
     created_at timestamp not null,
     updated_at timestamp,
@@ -100,17 +110,17 @@ create table viaje (
 
 create table vehiculo (
     id int auto_increment primary key,
-    matricula char(10) not null,
-    estado enum (
+    matricula char(7) unique not null,
+    estado enum(
         "Disponible",
         "No disponible",
         "En reparación"
     ) default "Disponible" not null,
-    peso float not null,
-    limite_peso float,
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp
+    peso decimal(7, 2) not null,
+    limite_peso decimal(10, 2) not null,
+    check (peso > 0 and peso <= 48000),
+    check (limite_peso > 0),
+    check (matricula REGEXP "^[A-Z]{3}[0-9]{4}$")
 );
 
 create table vehiculo_transporta (
@@ -128,7 +138,8 @@ create table vehiculo_transporta (
     updated_at timestamp,
     deleted_at timestamp,
     foreign key (vehiculo_id) references vehiculo(id),
-    foreign key (lote_id) references lote(id)
+    foreign key (lote_id) references lote(id),
+    check (orden > 0)
 );
 
 create table viaje_asignado (
@@ -144,7 +155,7 @@ create table viaje_asignado (
     foreign key (vehiculo_id) references vehiculo(id),
     foreign key (lote_id) references lote(id),
     foreign key (viaje_id) references viaje(id)
-); 
+);
 
 create table transportista (
     id int auto_increment primary key,
@@ -162,10 +173,7 @@ create table funcionario (
     user_id int not null,
     almacen_id int not null,
     empresa_id int,
-    tipo enum("Propio", "De terceros") not null,
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp,
+    tipo enum("Propio", "De terceros") default "Propio" not null,
     foreign key (user_id) references users(id),
     foreign key (almacen_id) references almacen(id),
     foreign key (empresa_id) references cliente(id)
@@ -184,12 +192,10 @@ create table telefono (
     id int auto_increment primary key,
     user_id int,
     empresa_id int,
-    telefono char(9),
-    created_at timestamp not null,
-    updated_at timestamp,
-    deleted_at timestamp,
+    telefono char(9) unique not null,
     foreign key (user_id) references users(id),
-    foreign key (empresa_id) references cliente(id)
+    foreign key (empresa_id) references cliente(id),
+    check (telefono REGEXP "^[0-9]{1,9}$")
 );
 
 create table ubicacion (
@@ -200,7 +206,27 @@ create table ubicacion (
     calle varchar(30) not null,
     esquina varchar(30),
     nro_de_puerta int not null,
-    departamento varchar(15),
+    departamento enum(
+        "Artigas",
+        "Canelones",
+        "Cerro Largo",
+        "Colonia",
+        "Durazno",
+        "Flores",
+        "Florida",
+        "Lavalleja",
+        "Maldonado",
+        "Montevideo",
+        "Paysandú",
+        "Río Negro",
+        "Rivera",
+        "Rocha",
+        "Salto",
+        "San José",
+        "Soriano",
+        "Tacuarembó",
+        "Treinta y Tres"
+    ) not null,
     coordenada varchar(255),
     created_at timestamp not null,
     updated_at timestamp,
@@ -210,66 +236,229 @@ create table ubicacion (
     foreign key (empresa_id) references cliente(id)
 );
 
-insert into users (ci, nombre, apellido, apellido2, email, password, created_at,updated_at)
-    values
-        ("54345670", "Guillermo", "Texeira", "Gon calvez", "admin@admin.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now()),
-        ("53213450", "Eustaquio", "Abichuelas", "Fernandez", "@eu.abichuelas@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now()),
-        ("52345670", "Fernando", "Fernandez", "Fernandez", "ferferfer@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now()),
-        ("51245670", "Rodrigo", "Rodriguez", "Rodriguez", "rodrodrod@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y", now(), now());
+create table cadete (
+    id int auto_increment primary key
+);
 
-insert into almacen (nombre, tipo, created_at, updated_at)
-    values
-        ("Almacen Montevideo", "Propio", now(), now()),
-        ("Almacen Salto", "Propio", now(), now()),
-        ("Almacen Durázno", "Propio", now(), now()),
-        ("Almacen Tacuárembo", "Propio", now(), now());
+create table reparte_producto (
+    id int auto_increment primary key,
+    cadete_id int not null,
+    producto_id int not null,
+    fecha_salida datetime default current_timestamp not null,
+    entregado tinyint(1) default 0,
+    foreign key (cadete_id) references cadete(id)
+);
 
-insert into ubicacion (user_id, calle, nro_de_puerta, departamento, created_at, updated_at)
-    values
-        (1, "Larravide", 11, "Montevideo", now(), now()),
-        (2, "Larravide", 22, "Montevideo", now(), now()),
-        (3, "Larravide", 13, "Montevideo", now(), now()),
-        (4, "Larravide", 101, "Montevideo", now(), now());
+DELIMITER //
+create trigger check_sum_peso_productos
+after insert on lote
+for each row
+begin
+    declare lote_peso decimal(10,2);
+    declare suma_peso_productos decimal(10,2);
 
-insert into ubicacion (almacen_id, calle, nro_de_puerta, departamento, created_at, updated_at)
-    values
-        (1, "Ruta 101", 3, "Montevideo", now(), now()),
-        (2, "Florinda", 3, "Salto", now(), now()),
-        (3, "Ordoñez", 55, "Durázno", now(), now()),
-        (4, "Horacio", 78, "Tacuárembo", now(), now());
+    select NEW.peso into lote_peso;
 
+    select sum(peso) into suma_peso_productos
+    from producto
+    where lote_id = NEW.id;
 
+    if lote_peso <> suma_peso_productos then
+        signal sqlstate "45000"
+        set message_text = "La suma de los pesos de los productos no coincide con el peso del lote";
+        delete from lote where id = NEW.id;
+    end if;
+end;
+//
+DELIMITER ;
 
-insert into telefono (user_id, telefono, created_at, updated_at)
-    values  
-        (1, "096420645", now(), now()),
-        (2, "096420644", now(), now()),
-        (3, "096420633", now(), now()),
-        (4, "096420622", now(), now());
+DELIMITER //
+create trigger check_salida_programada
+before insert on vehiculo_transporta
+for each row
+begin
+  if NEW.salida_programada <= now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser mayor a la actual";
+  end if;
+end;
 
-insert into producto (almacen_id, peso, departamento, direccion_entrega, fecha_entrega, created_at, updated_at)
-    values
-        (1, 44.2, "Salto", "Horacio 22", "2023-10-5", now(), now()),
-        (1, 2.1, "Salto", "Horacio 22", "2023-10-5", now(), now()),
-        (1, 13.22, "Salto", "Horacio 22", "2023-10-5", now(), now());
+create trigger check_limite_peso_vehiculo
+before insert on vehiculo_transporta
+for each row
+begin
+    declare peso_total decimal(10, 2);
+    declare peso_anteriores_lotes decimal(10, 2);
+    declare peso_nuevo_lote decimal(10, 2);
+    declare limite_peso_vehiculo decimal(10, 2);
 
-insert into vehiculo (matricula, peso, limite_peso, created_at, updated_at)
-    values
-        ("34567GHDS2", 1000, 500, now(), now()),
-        ("345F7GHDS2", 1000, 500, now(), now());
+    -- Obtengo el peso de los Anteriores Lotes
+    select sum(l.peso) into peso_anteriores_lotes
+    from lote l
+    where id in (
+        select lote_id from vehiculo_transporta vt
+        where vehiculo_id = NEW.vehiculo_id and estado_viaje = NEW.estado_viaje
+    );
 
-insert into ruta (distanciakm, tiempo_estimado, created_at, updated_at)
-    values
-        (1000, "04:43:00", now(), now());
+    -- Obtengo el peso del Lote actual
+    select peso into peso_nuevo_lote
+    from lote where id = NEW.lote_id;
 
-insert into administrador (user_id, created_at, updated_at)
-    values
-        (1, now(), now());
+    -- Sumo los pesos
+    set peso_total = peso_anteriores_lotes + peso_nuevo_lote;
 
-insert into funcionario (user_id, almacen_id, tipo,created_at, updated_at)
-    values
-      (2, 1, "Propio", now(), now());
+    -- Obtengo el limite de peso del vehículo asignado
+    select limite_peso into limite_peso_vehiculo
+    from vehiculo
+    where id = NEW.vehiculo_id;
 
-insert into transportista (user_id,created_at, updated_at)
-    values
-        (3, now(), now());
+    if peso_total > limite_peso_vehiculo then
+    SIGNAL SQLSTATE "45000"
+    set message_text = "La suma de los pesos de los lotes superan al límite del vehiculo asignado";
+    end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_fecha_entrega
+before insert on producto
+for each row
+begin
+    declare fecha_actual datetime;
+    declare plazo_fecha_maximo datetime;
+
+    set fecha_actual = now();
+    set plazo_fecha_maximo = DATE_ADD(fecha_actual, interval 2 day);
+
+    if NEW.fecha_entrega < fecha_actual or NEW.fecha_entrega > plazo_fecha_maximo then
+        signal sqlstate "45000"
+        set message_text = "La fecha de entrega del producto es incorrecta";
+    end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_salida_insertar
+before insert on viaje
+for each row
+begin
+  if NEW.salida <> now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser la actual";
+  end if;
+end;
+
+create trigger check_ultimo_destino_actualizar
+before update on viaje
+for each row
+begin
+  if NEW.ultimo_destino <= NEW.salida then
+    signal sqlstate "45000"
+    set message_text = "El último destino tiene que ser mayor a la salida";
+  end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_llegada_almacen
+before update on viaje_asignado
+for each row
+begin
+  if NEW.llegada_almacen <> now() then
+    signal sqlstate "45000"
+    set message_text = "La fecha tiene que ser la actual";
+  end if;
+end;
+
+create trigger check_salida_almacen
+before update on viaje_asignado
+for each row
+begin
+  if NEW.salida_almacen <= NEW.llegada_almacen then
+    signal sqlstate "45000"
+    set message_text = "La salida del tiene que ser mayor a la llegada";
+  end if;
+end;
+
+create trigger check_llegada_almacen_mayor_salida
+before update on viaje_asignado
+for each row
+begin
+    declare salida_inicial datetime;
+
+    select salida into salida_inicial
+    from viaje where id = NEW.viaje_id;
+
+    if NEW.llegada_almacen <= salida_inicial then
+        signal sqlstate "45000"
+        set message_text = "La llegada al almacén tiene que ser mayor a la salida inical del viaje";
+    end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_existencia_ubicacion
+before insert on ubicacion
+for each row
+begin
+    if 
+        NEW.user_id is null and
+        NEW.almacen_id is null and
+        NEW.empresa_id is null
+    then
+        signal sqlstate "45000"
+        set message_text = "Al menos uno de user_id, almacen_id o empresa_id debe tener un valor";
+        end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_existencia_telefono
+before insert on telefono
+for each row
+begin
+    if 
+        NEW.user_id is null and
+        NEW.empresa_id is null
+    then
+        signal sqlstate "45000"
+        set message_text = "Al menos uno de user_id o empresa_id debe tener un valor";
+    end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger check_tipo_usuario
+before insert on funcionario
+for each row
+begin
+    declare tipo_almacen varchar(15);
+    declare cliente_id int;
+    select tipo into tipo_almacen from almacen where id = NEW.almacen_id;
+
+    if NEW.tipo = "Propio" and tipo_almacen <> "Propio" then
+        signal sqlstate "45000"
+        set message_text = 'Los funcionarios de tipo "Propio" deben tener una clave foránea con almacenes de tipo "Propio".';
+    end if;
+
+    if NEW.tipo = "De terceros" and tipo_almacen <> "De terceros" then
+        signal sqlstate "45000"
+        set message_text = 'Los funcionarios de tipo "De terceros" deben tener una clave foránea con almacenes de tipo "De terceros".';
+    end if;
+
+    if NEW.tipo = "De terceros" then
+        select id into cliente_id from cliente where id = NEW.empresa_id;
+        if cliente_id is null then
+            signal sqlstate "45000"
+            set message_text = 'Los funcionarios de tipo "De terceros" deben tener una clave foránea referenciando a una empresa.';
+        end if;
+    end if;
+end;
+//
+DELIMITER ;
