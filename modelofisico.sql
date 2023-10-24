@@ -415,3 +415,33 @@ begin
 end;
 //
 DELIMITER ;
+
+DELIMITER //
+create trigger check_tipo_usuario
+before insert on funcionario
+for each row
+begin
+    declare tipo_almacen varchar(15);
+    declare cliente_id int;
+    select tipo into tipo_almacen from almacen where id = NEW.almacen_id;
+
+    if NEW.tipo = "Propio" and tipo_almacen <> "Propio" then
+        signal sqlstate "45000"
+        set message_text = 'Los funcionarios de tipo "Propio" deben tener una clave foránea con almacenes de tipo "Propio".';
+    end if;
+
+    if NEW.tipo = "De terceros" and tipo_almacen <> "De terceros" then
+        signal sqlstate "45000"
+        set message_text = 'Los funcionarios de tipo "De terceros" deben tener una clave foránea con almacenes de tipo "De terceros".';
+    end if;
+
+    if NEW.tipo = "De terceros" then
+        select id into cliente_id from cliente where id = NEW.empresa_id;
+        if cliente_id is null then
+            signal sqlstate "45000"
+            set message_text = 'Los funcionarios de tipo "De terceros" deben tener una clave foránea referenciando a una empresa.';
+        end if;
+    end if;
+end;
+//
+DELIMITER ;
