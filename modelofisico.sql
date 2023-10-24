@@ -224,7 +224,8 @@ create table reparte_producto (
     cadete_id int not null,
     producto_id int not null,
     fecha_salida datetime default current_timestamp not null,
-    entregado tinyint(1) default 0
+    entregado tinyint(1) default 0,
+    foreign key (cadete_id) references cadete(id)
 );
 
 DELIMITER //
