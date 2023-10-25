@@ -94,7 +94,7 @@ create table producto (
         "Treinta y Tres"
     ) not null,
     direccion_entrega varchar(100) not null,
-    fecha_entrega date not null,
+    fecha_entrega DATE DEFAULT (CURRENT_DATE + INTERVAL 2 DAY) NOT NULL,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp,
     deleted_at timestamp,
