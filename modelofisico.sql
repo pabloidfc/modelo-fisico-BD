@@ -116,7 +116,7 @@ create table ruta (
 create table viaje (
     id int auto_increment primary key,
     ruta_id int not null,
-    salida datetime default current_timestamp not null,
+    salida datetime,
     ultimo_destino datetime,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp,

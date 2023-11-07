@@ -21,7 +21,8 @@ insert into users (ci, nombre, apellido, apellido2, email, password)
 
 insert into cliente(rut,direccion,email,cuentabancaria)
     values
-        ("123456789102", "Larravide", "jaja@gmail.com", "6565654321092");
+        ("123456789102", "Larravide", "crecomgaming@gmail.com", "6565654321092"),
+        ("123645789102", "Larravide", "firulaisenvios@gmail.com", "6665554441092");
 
 insert into almacen (nombre, tipo)
     values
@@ -52,6 +53,11 @@ insert into telefono (user_id, telefono)
         (3, "096420633"),
         (4, "096420622");
 
+insert into telefono (empresa_id, telefono)
+    values  
+        (1, "096402645"),
+        (2, "096411645");
+
 insert into funcionario(user_id,almacen_id,tipo,empresa_id)
     values
         (2,1,"Propio",null),
@@ -72,14 +78,36 @@ insert into administrador(user_id)
     values
         (1);
 
-insert into transportista(user_id)
-    values
-        (5),
-        (6);
-
 insert into vehiculo (matricula,peso,limite_peso)
     values
         ("abc1234",4000,22000),
         ("abc2234",4000,22000),
         ("abc3234",4000,22000),
         ("abc4234",4000,22000);
+
+insert into transportista(user_id, vehiculo_id)
+    values
+        (5,1),
+        (6,2);
+
+insert into producto (almacen_id, peso, departamento,direccion_entrega)
+    values
+        (2,55.23,"Salto", "Flores 22"),
+        (2,25.21,"Soriano", "Pétalos 222"),
+        (2,45.44,"Río Negro", "Reducto 22"),
+        (2,53.77,"Soriano", "Propios 22"),
+        (2,23.88,"Río Negro", "Rivera 22"),
+        (2,102.22,"Río Negro", "Hola 22"),
+        (2,44.32,"Soriano", "Horacio 22"),
+        (2,66.12,"Salto", "Hernesto 22"),
+        (2,21.79,"Salto", "Silvido 22"),
+        (2,77.11,"Salto", "Panflin 22"),
+        (2,33.37,"Soriano", "Panfleto 22"),
+        (2,57.66,"Artigas", "Llorón 22"),
+        (2,11.22,"Salto", "Como estas 22");
+
+insert into ruta (distanciakm, tiempo_estimado)
+    values
+        (400.22, "05:30:00"),
+        (398.12, "04:22:00"),
+        (599.22, "07:57:00");
