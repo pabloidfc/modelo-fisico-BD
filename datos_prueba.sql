@@ -17,7 +17,15 @@ insert into users (ci, nombre, apellido, apellido2, email, password)
         ("54414566", "Geronimo", "Benavidez", "Benavidez", "elmomo@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
         ("52234566", "Javier", "Gerardo", "Milei", "libertad@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
         ("53334566", "Daniel", "Santomé", "Lemus", "dalasreview@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
-        ("54573566", "Gonzálo", "Banzas", "Banzas", "gonchito@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y");
+        ("54573566", "Gonzálo", "Banzas", "Banzas", "gonchito@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54378964", "Adele", "Blue", "Adkins", "hello@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54371964", "Avril", "Ramona", "Lavigne", "heyheyhey@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54372964", "Kymberly", "Kardashian", "West", "kimkardashian@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54373964", "Omar", "Ladrón", "Rivera", "elsenordelanoche@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54374964", "Shakira", "Mebarak", "Ripoll", "wakawaka@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54375964", "Marshall", "Bruce", "Mathers", "slimshady@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54378664", "Nicolas", "Kim", "Coppola", "falsosuperman@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y"),
+        ("54378164", "Michael", "Gardenzio", "Stallone", "rocky@gmail.com", "$2y$10$DfhgfGk9VSPe/O///qg5iuhmT7b9o7s8.Xhrzq3LTt20c6jvocs9y");
 
 insert into cliente(rut,direccion,email,cuentabancaria)
     values
@@ -37,7 +45,28 @@ insert into ubicacion (user_id, calle, nro_de_puerta, departamento)
         (1, "Larravide", 11, "Montevideo"),
         (2, "Larravide", 22, "Montevideo"),
         (3, "Larravide", 13, "Montevideo"),
-        (4, "Larravide", 101, "Montevideo");
+        (4, "Larravide", 101, "Montevideo"),
+        (5, "Larravide", 101, "Montevideo"),
+        (6, "Larravide", 101, "Montevideo"),
+        (7, "Larravide", 101, "Montevideo"),
+        (8, "Larravide", 101, "Montevideo"),
+        (9, "Larravide", 101, "Montevideo"),
+        (10, "Larravide", 101, "Montevideo"),
+        (11, "Larravide", 101, "Montevideo"),
+        (12, "Larravide", 101, "Montevideo"),
+        (13, "Larravide", 101, "Montevideo"),
+        (14, "Larravide", 101, "Montevideo"),
+        (15, "Larravide", 101, "Montevideo"),
+        (15, "Larravide", 101, "Montevideo"),
+        (16, "Larravide", 101, "Montevideo"),
+        (17, "Larravide", 101, "Montevideo"),
+        (18, "Larravide", 101, "Montevideo"),
+        (19, "Larravide", 101, "Montevideo"),
+        (20, "Larravide", 101, "Montevideo"),
+        (21, "Larravide", 101, "Montevideo"),
+        (22, "Larravide", 101, "Montevideo"),
+        (23, "Larravide", 101, "Montevideo"),
+        (24, "Larravide", 101, "Montevideo");
 
 insert into ubicacion (almacen_id, calle, nro_de_puerta, departamento) 
     values 
@@ -51,7 +80,27 @@ insert into telefono (user_id, telefono)
         (1, "096420645"),
         (2, "096420644"),
         (3, "096420633"),
-        (4, "096420622");
+        (4, "096420621"),
+        (5, "096420623"),
+        (6, "096420624"),
+        (7, "096420625"),
+        (8, "096420626"),
+        (9, "096420627"),
+        (10, "096420628"),
+        (11, "096420629"),
+        (12, "096420630"),
+        (13, "096420631"),
+        (14, "096420632"),
+        (15, "096420655"),
+        (16, "096420634"),
+        (17, "096420635"),
+        (18, "096420636"),
+        (19, "096420637"),
+        (20, "096420638"),
+        (21, "096420639"),
+        (22, "096420640"),
+        (23, "096420641"),
+        (24, "096420699");
 
 insert into telefono (empresa_id, telefono)
     values  
@@ -88,7 +137,15 @@ insert into vehiculo (matricula,peso,limite_peso)
 insert into transportista(user_id, vehiculo_id)
     values
         (5,1),
-        (6,2);
+        (6,2),
+        (17,null),
+        (18,null),
+        (19,null),
+        (20,null),
+        (21,null),
+        (22,null),
+        (23,null),
+        (24,null);
 
 insert into producto (almacen_id, peso, departamento,direccion_entrega)
     values
